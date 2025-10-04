@@ -21,13 +21,4 @@ class RabbitMQ:
         if self.connection and not self.connection.is_closed:
             self.connection.close()
 
-    def publish(self, message):
-        if not self.channel:
-            raise Exception("Connection is not established.")
-        self.channel.basic_publish(exchange="main-exchange",
-                                   routing_key="reasoning",
-                                   body=message,
-                                   properties=pika.BasicProperties(
-                                       delivery_mode=2,  
-                                   ))
         
