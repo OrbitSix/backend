@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from model import ManualPredictionReq
+from datamodel import ManualPredictionReq
 from uuid import uuid4
 from rabbitmq import RabbitMQ
 import pika
