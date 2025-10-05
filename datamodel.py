@@ -2,18 +2,22 @@ from pydantic import BaseModel
 
 class ManualPredictionReq(BaseModel):
     # Planetary and Orbital Params
-    k_ror: float
-    pl_prad_re: float
-    pl_orbper_days: float
-    pl_insol_flux: float
-    pl_depth_ppm: float
-    pl_trandur_hrs: float
-    koi_impact: float 
-    pl_tranmid_bjd: float
+    radius_ratio: float
+    planetary_radius: float
+    orbital_period: float
+    insolation_flux: float
+    transit_depth: float
+    transit_duration: float
+    impact_parameter: float 
+    transit_midpoint: float
     # Stellar Properties
-    st_teff_k: float
-    st_rad_rsun: float
-    k_srho: float
-    st_mag_tess: float
+    stellar_temp: float
+    stellar_radius: float
+    stellar_density: float
+    stellar_mag_tess: float
+    stellar_mass: float
+    stellar_logg: float
+    stellar_metallicity: float
     # Data Quality and Confidence
-    koi_model_snr: float
+    transit_depth_err: float
+    model_snr: float

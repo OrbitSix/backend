@@ -2,3 +2,8 @@ fastapi[standard]
 python-multipart
 pika
 redis[hiredis]
+pandas
+numpy
+lightkurve
+imblearn
+lightgbm
