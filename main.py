@@ -13,9 +13,22 @@ from pathlib import Path
 import os
 import lightkurve as lk
 import matplotlib.pyplot as plt
+from fastapi.middleware.cors import CORSMiddleware
 
 rabbitmq = RabbitMQ()
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+    "https://orbitsix.earth"
+]
+
+app.add_middleware(CORSMiddleware, 
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Prepare models
 prepare()
