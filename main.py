@@ -151,31 +151,31 @@ async def rawLightcurvePrediction(file: UploadFile):
     os.remove(file_path)
 
     # Give reasoning job to MQ
-    global rabbitmq
-    if rabbitmq == None:
-        rabbitmq = RabbitMQ()
-    try:
-        rabbitmq.channel.basic_publish(exchange="main-exchange",
-                            routing_key="reasoning",
-                            body=json.dumps({
-                                    "id": req_id,
-                                    "type": 2,
-                                    # **req_body_parsed 
-                                    }),
-                            properties=pika.BasicProperties(delivery_mode=2)
-                         )
-    except:
-        rabbitmq.close()
-        rabbitmq = RabbitMQ()
-        rabbitmq.channel.basic_publish(exchange="main-exchange",
-                            routing_key="reasoning",
-                            body=json.dumps({
-                                    "id": req_id,
-                                    "type": 2,
-                                    # **req_body_parsed 
-                                    }),
-                            properties=pika.BasicProperties(delivery_mode=2)
-                         )
+    # global rabbitmq
+    # if rabbitmq == None:
+    #     rabbitmq = RabbitMQ()
+    # try:
+    #     rabbitmq.channel.basic_publish(exchange="main-exchange",
+    #                         routing_key="reasoning",
+    #                         body=json.dumps({
+    #                                 "id": req_id,
+    #                                 "type": 2,
+    #                                 # **req_body_parsed 
+    #                                 }),
+    #                         properties=pika.BasicProperties(delivery_mode=2)
+    #                      )
+    # except:
+    #     rabbitmq.close()
+    #     rabbitmq = RabbitMQ()
+    #     rabbitmq.channel.basic_publish(exchange="main-exchange",
+    #                         routing_key="reasoning",
+    #                         body=json.dumps({
+    #                                 "id": req_id,
+    #                                 "type": 2,
+    #                                 # **req_body_parsed 
+    #                                 }),
+    #                         properties=pika.BasicProperties(delivery_mode=2)
+    #                      )
 
     return {
         "id": req_id,
