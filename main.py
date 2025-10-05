@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.responses import FileResponse
 from datamodel import ManualPredictionReq
 from uuid import uuid4
@@ -7,6 +7,7 @@ import pika
 import json
 import redis
 import numpy as np
+from model import predict as predict_csv, prepare as prepare_full
 from model_reduced import prepare, predict
 import shutil
 from pathlib import Path
@@ -14,6 +15,9 @@ import os
 import lightkurve as lk
 import matplotlib.pyplot as plt
 from fastapi.middleware.cors import CORSMiddleware
+
+import io
+import pandas as pd
 
 rabbitmq = RabbitMQ()
 app = FastAPI()
@@ -32,6 +36,7 @@ app.add_middleware(CORSMiddleware,
 
 # Prepare models
 prepare()
+prepare_full()
 
 # Light curves 
 LIGHTCURVE_FOLDER = Path("lightcurvedata")
@@ -207,3 +212,29 @@ async def getLightCurve(id:str):
     return {
         "status": "ok"
     }
+
+@app.post("/predict-csv/")
+async def predictCSV(file: UploadFile):
+    if not file.filename.endswith('.csv'):
+        raise HTTPException(status_code=400, detail="Invalid file format. Please upload a CSV file.")
+
+    try:
+        contents = await file.read()
+        string_io = io.StringIO(contents.decode("utf-8"))
+        df = pd.read_csv(string_io)
+
+        res = predict_csv(df)
+
+        result = []
+        for score in list(res["final_stacked_prob"]):
+            if score >= np.float64(0.5):
+                result.append("Exoplanet")
+            else:
+                result.append("Not Exoplanet")
+
+        return {
+            "res": result
+        }
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"There was an error processing the file: {e}")
