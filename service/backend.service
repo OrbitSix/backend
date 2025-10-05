@@ -1,0 +1,28 @@
+[Unit]
+Description=OrbitSix backend
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+# Where your app lives
+WorkingDirectory=/opt/backend
+# Run as root
+User=root
+ExecStart=/opt/backend/venv/bin/uvicorn main:app --port 8000 --workers=4
+
+# Environment
+EnvironmentFile=/opt/backend/.env
+
+# Restart policy
+Restart=always
+RestartSec=5
+
+# File descriptors & performance
+LimitNOFILE=65535
+
+# Logging: goes to journalctl
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

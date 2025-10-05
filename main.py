@@ -60,6 +60,10 @@ async def manualPrediction(req_body: ManualPredictionReq):
     req_id = uuid4().__str__()
     
     # Pass reasoning job to MQ
+    verdictNum = 0;
+    if verdict == "Exoplanet":
+        verdictNum=1
+    
     global rabbitmq
     if rabbitmq == None:
         rabbitmq = RabbitMQ()
@@ -69,6 +73,7 @@ async def manualPrediction(req_body: ManualPredictionReq):
                             body=json.dumps({
                                     "id": req_id,
                                     "type": 1,
+                                    "verdict": verdictNum,
                                     **req_body_parsed 
                                     }),
                             properties=pika.BasicProperties(delivery_mode=2)
@@ -81,6 +86,7 @@ async def manualPrediction(req_body: ManualPredictionReq):
                             body=json.dumps({
                                     "id": req_id,
                                     "type": 1,
+                                    "verdict": verdictNum,
                                     **req_body_parsed 
                                     }),
                             properties=pika.BasicProperties(delivery_mode=2)
