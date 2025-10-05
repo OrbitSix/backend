@@ -8,7 +8,7 @@ Wants=network-online.target
 WorkingDirectory=/opt/backend
 # Run as root
 User=root
-ExecStart=/opt/backend/venv/bin/uvicorn main:app --port 8000 --workers=4
+ExecStart=/opt/backend/venv/bin/uvicorn main:app --port 8000 --workers=2
 
 # Environment
 EnvironmentFile=/opt/backend/.env
