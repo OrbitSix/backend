@@ -15,6 +15,7 @@ import os
 import lightkurve as lk
 import matplotlib.pyplot as plt
 from fastapi.middleware.cors import CORSMiddleware
+from existing import search_planets_by_name, fetch_planet_data
 
 import io
 import pandas as pd
@@ -213,7 +214,7 @@ async def getLightCurve(id:str):
         "status": "ok"
     }
 
-@app.post("/predict-csv/")
+@app.post("/predict-csv")
 async def predictCSV(file: UploadFile):
     if not file.filename.endswith('.csv'):
         raise HTTPException(status_code=400, detail="Invalid file format. Please upload a CSV file.")
@@ -238,3 +239,39 @@ async def predictCSV(file: UploadFile):
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"There was an error processing the file: {e}")
+    
+@app.get("/name-suggestion")
+async def getNameSuggestion(mission:str, name_query:str):
+    try:
+        res= search_planets_by_name(mission=mission, name_query=name_query)
+        
+        return {
+            "suggested_names": res,
+        }
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail=f"There was an error processing the file: {e}")
+
+@app.get("/dataset-prediction")
+async def getNameSuggestion(mission:str, name_query:str):
+    try:
+        data = fetch_planet_data(mission=mission, planet_id=name_query)
+
+        if (data.empty):
+            raise HTTPException(status_code=404, detail=f"Planet data not found")
+
+        res = predict_csv(data)
+
+        print(res)
+        verdict = "Not Exoplanet"
+        if (res['final_stacked_prob'][0] >= 0.5):
+            verdict = "Exoplanet"
+
+        return {
+            "verdict": verdict,
+        }
+    except Exception as e:
+        if (e.__str__() == "404: Planet data not found"):
+            raise HTTPException(status_code=404, detail=f"Planet data not found")
+        else:
+            raise HTTPException(status_code=500, detail=f"There was an error processing the file: {e}")
